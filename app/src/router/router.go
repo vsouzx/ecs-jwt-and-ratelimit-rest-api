@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/controller"
+	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/middleware"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/repository"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/service/auth"
 	"gorm.io/gorm"
@@ -12,6 +13,8 @@ import (
 
 func BuildServer(db *gorm.DB) *fiber.App {
 	app := fiber.New(fiber.Config{})
+
+	app.Use(middleware.AuthJWT())
 
 	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK")})
 
