@@ -10,14 +10,18 @@ import (
 )
 
 func AuthJWT() fiber.Handler {
+	skip := map[string]struct{}{
+		"/health": {},
+		"/register": {},
+		"/login": {},
+	}
+
 	return func(c *fiber.Ctx) error {
 
 		// Skip para rotas públicas
-		path := c.Path()
-		if path == "/register" || path == "/login"{
+		if _, ok := skip[c.Path()]; ok {
 			return c.Next()
 		}
-
 		auth := c.Get("Authorization")
 		parts := strings.SplitN(auth, " ", 2)
 		if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {

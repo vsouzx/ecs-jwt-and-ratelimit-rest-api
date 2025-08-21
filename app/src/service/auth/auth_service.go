@@ -71,7 +71,6 @@ func (as *authService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
 	}
 
 	secretKey := os.Getenv("JWT_SECRET")
-	fmt.Print(secretKey)
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
 	if err != nil { 
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Erro ao gerar token: %s", err.Error())})

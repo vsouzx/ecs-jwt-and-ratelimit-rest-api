@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	redis "github.com/redis/go-redis/v9"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/controller"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/middleware"
 	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/repository"
@@ -11,9 +12,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func BuildServer(db *gorm.DB) *fiber.App {
+func BuildServer(db *gorm.DB, redisClient *redis.Client) *fiber.App {
 	app := fiber.New(fiber.Config{})
 
+	app.Use(middleware.RateLimiter(redisClient))
 	app.Use(middleware.AuthJWT())
 
 	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK")})
