@@ -14,9 +14,7 @@ func main() {
 
 	app := router.BuildServer(db, redisClient)
 
-	addr := ":3000"
-	log.Printf("🚀 Server rodando em %s", addr)
-	if err := app.Listen(addr); err != nil {
+	if err := app.Listen(":8080"); err != nil {
 		log.Fatal(err)
 	}
 }

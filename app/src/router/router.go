@@ -18,14 +18,13 @@ func BuildServer(db *gorm.DB, redisClient *redis.Client) *fiber.App {
 	app.Use(middleware.RateLimiter(redisClient))
 	app.Use(middleware.AuthJWT())
 
-	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK")})
-
 	//Injecao de dependecia sem o framework
 	userRepository := repository.NewUserRepository(db)
 	authService := auth.NewAuthService(userRepository)
 	authController := controller.NewAuthController(authService)
 
 	// Rotas públicas
+	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK")})
 	app.Post("/register", authController.Register)
 	app.Post("/login", authController.Login)
 

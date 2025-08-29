@@ -1,14 +1,20 @@
 version: '3.8'
 
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_container
-    restart: always
+  api:
+    image: vsouzx/ecs-jwt-and-ratelimit-rest-api
+    container_name: api_container
     environment:
-      MYSQL_DATABASE: database_test
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123@
+      DB_USER: ${DB_USER:root}
+      DB_PASSWORD: ${DB_PASSWORD:pass123}
+      DB_HOST: ${DB_HOST:host.docker.internal}
+      DB_PORT: ${DB_PORT:3306}
+      DB_NAME: ${DB_NAME:database_test}
+      JWT_SECRET: "E-zzg4VU#pOHu=qr5rEp&PEBq86Ak#q4UQswhRnV-L6zFsdfSsFnXD-86uQ6maFdAOUpjXzAzznc#KR63mQrB&SDR2QwEB5kRjAhvHhkR3PB88NKZpHh8#D3=eufOjR99KoqxNvhfPst=QPkxR1LoenuuEsE4tQDL70fQEDhv81Kxlh4hpBvpPM7lgxIyEEejVP9=iBbcBnPS=Cll=xAumnh&kOiD3oZ=wM6Qq2xPC#6rJUf5nqUmyYBzakPTpK#27eezrXy6EMOnJOJbau4uwZ9ohuCuWGwmJrx-d6O8snAo3Wq3wlmxwIBAxPkBMkNZJq81f#U0ZerHw-JQxUYWcSq"
+      REDIS_ADDR: host.docker.internal:6379
+      REDIS_PASS: admin123@
+      REDIS_DB: 0
+      RATE_LIMIT_COUNT: 10
+      RATE_LIMIT_TTL: 1
     ports:
-      - "3306:3306"
-
+      - "3000:3000"
