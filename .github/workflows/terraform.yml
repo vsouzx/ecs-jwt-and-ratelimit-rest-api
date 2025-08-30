@@ -61,8 +61,8 @@ jobs:
           file: ./app/Dockerfile
           push: true
           provenance: false
+          platforms: linux/amd64  
           tags: |
-            ${{ env.IMAGE_REPO }}:${{ steps.meta.outputs.image_tag }}
             ${{ env.IMAGE_REPO }}:${{ env.ENVIRONMENT }}-latest
 
       # ----- Terraform -----

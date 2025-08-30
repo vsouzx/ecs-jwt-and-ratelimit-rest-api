@@ -42,6 +42,10 @@ resource "aws_ecs_task_definition" "task_definition" {
   memory                   = "512" # 0.5 GB
   execution_role_arn       = aws_iam_role.ecs_task_execution.arn
 
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64" # ou "ARM64" se você realmente quiser ARM
+  }
 
   container_definitions = jsonencode([
     {
