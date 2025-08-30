@@ -1,7 +1,7 @@
 resource "aws_appautoscaling_target" "asg-gofiber-service" {
   max_capacity       = 4
   min_capacity       = 1
-  resource_id        = "service/${aws_ecs_cluster.this.name}/${aws_ecs_service.this.name}"
+  resource_id        = "service/${aws_ecs_cluster.gofiber-api-cluster.name}/${aws_ecs_service.gofiber-api.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace  = "ecs"
 }
