@@ -26,3 +26,7 @@ variable "container_env" {
     type = map(string)
     default = {}
 }
+
+variable "db_secret_arn" {
+  type = string
+}

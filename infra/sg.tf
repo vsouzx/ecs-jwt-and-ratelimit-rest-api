@@ -45,3 +45,51 @@ resource "aws_security_group" "task" {
         ipv6_cidr_blocks = ["::/0"]
     }   
 }
+
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-mysql-sg"
+  description = "Allow MySQL access"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description = "Allow MySQL from my IP"
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    #security_groups = [aws_security_group.lambda_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "rds-mysql-sg"
+  }
+}
+
+
+resource "aws_security_group" "redis_sg" {
+  name        = "redis-sg"
+  description = "Acesso ao Redis apenas a partir das ECS tasks"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description     = "Redis 6379 das ECS tasks"
+    from_port       = 6379
+    to_port         = 6379
+    protocol        = "tcp"
+    security_groups = [aws_security_group.task.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
