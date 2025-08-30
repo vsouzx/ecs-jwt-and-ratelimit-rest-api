@@ -61,7 +61,7 @@ jobs:
           file: ./app/Dockerfile
           push: true
           provenance: false
-          platforms: linux/amd64  
+          platforms: linux/arm64  
           tags: |
             ${{ env.IMAGE_REPO }}:${{ env.ENVIRONMENT }}-latest
 
