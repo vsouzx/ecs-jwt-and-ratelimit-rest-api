@@ -2,7 +2,7 @@
 resource "aws_security_group" "alb" {
     name = "${var.app_name}-alb-sg"
     description = "ALB SG"
-    id = data.aws_vpc.default.vpc_id
+    vpc_id = data.aws_vpc.default.id
 
     ingress {
         description = "HTTP"
