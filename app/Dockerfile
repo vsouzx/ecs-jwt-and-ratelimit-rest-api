@@ -1,18 +1,15 @@
-FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
+FROM golang:1.24.3-alpine AS builder    
 WORKDIR /app
-
-COPY go.mod go.sum ./
-RUN go mod download
-
 COPY . .
 
-ARG TARGETOS TARGETARCH
-ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
-RUN go build -ldflags="-s -w" -o /app/main .
+RUN go mod download
+RUN go build -o main 
 
-FROM --platform=$TARGETPLATFORM scratch
+FROM scratch
 WORKDIR /app
-COPY --from=builder /app/main /app/main
+
+COPY --from=builder /app/main .
 
 EXPOSE 3000
-ENTRYPOINT ["/app/main"]
+
+CMD ["/app/main"]
