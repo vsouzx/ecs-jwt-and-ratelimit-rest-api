@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.6
 
-FROM --platform=$BUILDPLATFORM golang:1.24.3-alpine AS builder
+FROM --platform=linux/amd64 golang:1.24.3-alpine AS builder
 WORKDIR /app
 
 RUN apk add --no-cache git ca-certificates
