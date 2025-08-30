@@ -30,7 +30,7 @@ resource "aws_security_group" "task" {
     vpc_id = data.aws_vpc.default.id
 
     ingress {
-        description = "ALB -> Task"
+        description = "ALB to Task"
         from_port = var.container_port
         to_port = var.container_port
         protocol = "tcp"
