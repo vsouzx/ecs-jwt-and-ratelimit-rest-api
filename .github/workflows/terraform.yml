@@ -23,9 +23,9 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       IMAGE_NAME: ${{ github.event.repository.name }}
-      # Repo no Docker Hub: <usuario>/<repo>
       IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
