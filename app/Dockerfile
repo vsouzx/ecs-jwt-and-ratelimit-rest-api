@@ -11,7 +11,7 @@ RUN go mod download
 COPY . .
 
 ARG TARGETOS TARGETARCH
-ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 RUN go build -ldflags="-s -w" -o /app/main .
 
 FROM scratch
