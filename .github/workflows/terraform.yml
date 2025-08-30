@@ -20,12 +20,12 @@ jobs:
     env:
       AWS_REGION: ${{ inputs['aws-region'] }}
       ENVIRONMENT: ${{ inputs.environment }}
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ vars.DOCKERHUB_TOKEN }}
       IMAGE_NAME: ${{ github.event.repository.name }}
       IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
