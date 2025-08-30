@@ -23,7 +23,7 @@ jobs:
       DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ vars.DOCKERHUB_TOKEN }}
       IMAGE_NAME: ${{ github.event.repository.name }}
-      IMAGE_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
+      IMAGE_REPO: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 
 
     steps:
