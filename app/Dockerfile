@@ -1,15 +1,22 @@
-FROM golang:1.24.3-alpine AS builder    
+# syntax=docker/dockerfile:1.6
+
+FROM --platform=$BUILDPLATFORM golang:1.23-alpine AS builder
 WORKDIR /app
+
+RUN apk add --no-cache git ca-certificates
+
+COPY go.mod go.sum ./
+RUN go mod download
+
 COPY . .
 
-RUN go mod download
-RUN go build -o main 
+ARG TARGETOS TARGETARCH
+ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
+RUN go build -ldflags="-s -w" -o /app/main .
 
 FROM scratch
 WORKDIR /app
-
-COPY --from=builder /app/main .
+COPY --from=builder /app/main /app/main
 
 EXPOSE 3000
-
-CMD ["/app/main"]
+ENTRYPOINT ["/app/main"]
