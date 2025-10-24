@@ -52,12 +52,11 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description = "Allow MySQL from my IP"
+    description = "Allow MySQL from ECS tasks"
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-    #security_groups = [aws_security_group.lambda_sg.id]
+    security_groups = [aws_security_group.task.id]
   }
 
   egress {
