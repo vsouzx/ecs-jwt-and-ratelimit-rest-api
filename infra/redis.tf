@@ -16,7 +16,7 @@ resource "aws_elasticache_replication_group" "redis" {
 
   transit_encryption_enabled = true
   at_rest_encryption_enabled = true
-  auth_token                 = "admin123@"
+  auth_token                 = var.redis_auth_token
 
   automatic_failover_enabled = false        # sem réplicas => precisa ser false
 

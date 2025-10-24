@@ -28,10 +28,28 @@ resource "aws_ecs_cluster" "gofiber-api-cluster" {
 }
 
 locals {
-  container_env = [for k, v in var.container_env : {
-    name  = k
-    value = v
-  }]
+  container_env_map = merge({
+    DB_USER          = local.db_secret.db_username,
+    DB_PASSWORD      = local.db_secret.db_password,
+    DB_HOST          = aws_db_instance.default.address,
+    DB_PORT          = tostring(aws_db_instance.default.port),
+    DB_NAME          = aws_db_instance.default.db_name,
+    JWT_SECRET       = var.jwt_secret,
+    REDIS_ENDPOINT   = aws_elasticache_replication_group.redis.primary_endpoint_address,
+    REDIS_PORT       = tostring(aws_elasticache_replication_group.redis.port),
+    REDIS_PASS       = var.redis_auth_token,
+    REDIS_DB         = tostring(var.redis_db),
+    RATE_LIMIT_COUNT = tostring(var.rate_limit_count),
+    RATE_LIMIT_TTL   = tostring(var.rate_limit_ttl),
+    RUN_AUTOMIGRATE  = tostring(var.run_automigrate),
+  }, var.extra_container_env)
+
+  container_env = [
+    for k, v in local.container_env_map : {
+      name  = k
+      value = v
+    }
+  ]
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
