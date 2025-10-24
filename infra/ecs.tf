@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 
   runtime_platform {
     operating_system_family = "LINUX"
-    cpu_architecture        = "ARM64" # ou "ARM64" se você realmente quiser ARM
+    cpu_architecture        = "X86_64"
   }
 
   container_definitions = jsonencode([
