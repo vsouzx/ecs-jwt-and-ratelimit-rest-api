@@ -47,8 +47,6 @@ func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro salvar usuário no banco: %s", err.Error()))
 	}
 
-	print("teste")
-
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Usuário criado com sucesso"})
 }
 
