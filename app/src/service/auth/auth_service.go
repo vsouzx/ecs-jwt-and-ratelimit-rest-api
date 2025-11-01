@@ -30,7 +30,6 @@ func NewAuthService(userRepository repository.UserRepositoryInterface) *authServ
 
 func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 	existingUser, err := as.UserRepository.FindByEmail(req.Email)
-
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
 	}
