@@ -11,9 +11,9 @@ import (
 
 func AuthJWT() fiber.Handler {
 	skip := map[string]struct{}{
-		"/health": {},
+		"/health":   {},
 		"/register": {},
-		"/login": {},
+		"/login":    {},
 	}
 
 	return func(c *fiber.Ctx) error {

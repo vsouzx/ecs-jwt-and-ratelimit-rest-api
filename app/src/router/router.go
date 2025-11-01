@@ -24,7 +24,7 @@ func BuildServer(db *gorm.DB, redisClient *redis.Client) *fiber.App {
 	authController := controller.NewAuthController(authService)
 
 	// Rotas públicas
-	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK")})
+	app.Get("/health", func(c *fiber.Ctx) error { return c.SendString("OK") })
 	app.Post("/register", authController.Register)
 	app.Post("/login", authController.Login)
 

@@ -53,6 +53,7 @@ func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 func (as *authService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
 	user, err := as.UserRepository.FindByEmail(req.Email)
 	if err != nil {
+
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
 	}
 
@@ -66,15 +67,15 @@ func (as *authService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
 
 	claims := jwt.MapClaims{
 		"identifier": user.Identifier,
-		"exp": time.Now().Add(time.Duration(15) * time.Minute).Unix(),
-		"iat": time.Now().Unix(),
+		"exp":        time.Now().Add(time.Duration(15) * time.Minute).Unix(),
+		"iat":        time.Now().Unix(),
 	}
 
 	secretKey := os.Getenv("JWT_SECRET")
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
-	if err != nil { 
+	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Erro ao gerar token: %s", err.Error())})
 	}
-	
+
 	return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"token": token})
 }
