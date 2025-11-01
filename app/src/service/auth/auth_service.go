@@ -31,10 +31,10 @@ func NewAuthService(userRepository repository.UserRepositoryInterface) *authServ
 func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 	existingUser, err := as.UserRepository.FindByEmail(req.Email)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
+					return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
 	}
 	if existingUser != (model.User{}) {
-		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Já existe um usuário com este e-mail"})
+			return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Já existe um usuário com este e-mail"})
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -44,7 +44,7 @@ func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 
 	newUser := &model.User{Name: req.Name, Password: string(hashedPassword), Email: req.Email}
 	if err := as.UserRepository.Create(newUser); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro salvar usuário no banco: %s", err.Error()))
+				return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro salvar usuário no banco: %s", err.Error()))
 	}
 
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Usuário criado com sucesso"})
