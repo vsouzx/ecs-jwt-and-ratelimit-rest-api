@@ -18,17 +18,17 @@ type AuthServiceInterface interface {
 	Login(ctx *fiber.Ctx, req dto.LoginRequest) error
 }
 
-type authService struct {
+type AuthService struct {
 	UserRepository repository.UserRepositoryInterface
 }
 
-func NewAuthService(userRepository repository.UserRepositoryInterface) *authService {
-	return &authService{
+func NewAuthService(userRepository repository.UserRepositoryInterface) *AuthService {
+	return &AuthService{
 		UserRepository: userRepository,
 	}
 }
 
-func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
+func (as *AuthService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 	existingUser, err := as.UserRepository.FindByEmail(req.Email)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
@@ -50,7 +50,7 @@ func (as *authService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Usuário criado com sucesso"})
 }
 
-func (as *authService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
+func (as *AuthService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
 	user, err := as.UserRepository.FindByEmail(req.Email)
 	if err != nil {
 

@@ -16,7 +16,7 @@ func NewAuthController(authService auth.AuthServiceInterface) *AuthController {
 	}
 }
 
-// POST /register (público)
+// Register POST /register (público)
 func (ac *AuthController) Register(c *fiber.Ctx) error {
 	var request dto.RegisterRequest
 	if err := c.BodyParser(&request); err != nil {
@@ -25,7 +25,7 @@ func (ac *AuthController) Register(c *fiber.Ctx) error {
 	return ac.authService.Register(c, request)
 }
 
-// POST /login (público)
+// Login POST /login (público)
 func (ac *AuthController) Login(c *fiber.Ctx) error {
 	var request dto.LoginRequest
 	if err := c.BodyParser(&request); err != nil {
