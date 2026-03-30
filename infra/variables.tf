@@ -15,6 +15,17 @@ variable "image" {
     default = "vsouzx/ecs-jwt-and-ratelimit-rest-api:latest"
 }
 
+variable "cpu_architecture" {
+  description = "CPU architecture for the ECS task runtime platform (must match the container image architecture)"
+  type        = string
+  default     = "ARM64"
+
+  validation {
+    condition     = contains(["ARM64", "X86_64"], var.cpu_architecture)
+    error_message = "cpu_architecture must be ARM64 or X86_64."
+  }
+}
+
 variable "container_port" {
     description = "Porta exposta pelo container"
     type = number
