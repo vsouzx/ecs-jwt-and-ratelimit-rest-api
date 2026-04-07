@@ -12,19 +12,12 @@ import (
 )
 
 func RateLimiter(redisClient *redis.Client) fiber.Handler {
-	excludedRoutes := map[string]struct{}{
-		"/login": {},
-	}
-
 	maxRequests, _ := strconv.Atoi(os.Getenv("RATE_LIMIT_COUNT"))
 	windowMinutes, _ := strconv.Atoi(os.Getenv("RATE_LIMIT_TTL"))
 	windowDuration := time.Duration(windowMinutes) * time.Minute
 
 	return func(c *fiber.Ctx) error {
 		if c.Method() == fiber.MethodOptions {
-			return c.Next()
-		}
-		if _, ok := excludedRoutes[c.Path()]; ok {
 			return c.Next()
 		}
 
