@@ -64,6 +64,7 @@ jobs:
           platforms: linux/arm64  
           tags: |
             ${{ env.IMAGE_REPO }}:${{ env.ENVIRONMENT }}-latest
+            ${{ steps.meta.outputs.image_uri }}
 
       # ----- Terraform -----
       - name: Setup Terraform
