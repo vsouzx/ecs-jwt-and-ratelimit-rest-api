@@ -18,6 +18,7 @@ RUN file /app/main
 
 FROM scratch
 WORKDIR /app
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /app/main /app/main
 
 EXPOSE 3000
