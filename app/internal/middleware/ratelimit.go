@@ -41,7 +41,6 @@ func RateLimiter(redisClient *redis.Client) fiber.Handler {
 			windowTimeLeft = windowDuration
 		}
 
-		windowResetAt := time.Now().Add(windowTimeLeft).Unix()
 		remainingRequests := maxRequests - int(requestCount)
 		if remainingRequests < 0 {
 			remainingRequests = 0
@@ -49,21 +48,12 @@ func RateLimiter(redisClient *redis.Client) fiber.Handler {
 
 		c.Set("X-RateLimit-Limit", strconv.Itoa(maxRequests))
 		c.Set("X-RateLimit-Remaining", strconv.Itoa(remainingRequests))
-		c.Set("X-RateLimit-Reset", strconv.FormatInt(windowResetAt, 10))
 
 		if int(requestCount) > maxRequests {
-			retryAfterSecs := int((windowTimeLeft + (time.Second - 1)) / time.Second)
-			c.Set("Retry-After", strconv.Itoa(retryAfterSecs))
-
 			return c.Status(fiber.StatusTooManyRequests).JSON(fiber.Map{
-				"error":       "rate limit exceeded",
-				"limit":       maxRequests,
-				"remaining":   remainingRequests,
-				"reset_unix":  windowResetAt,
-				"retry_after": retryAfterSecs,
+				"error": "rate limit exceeded",
 			})
 		}
-
 		return c.Next()
 	}
 }
