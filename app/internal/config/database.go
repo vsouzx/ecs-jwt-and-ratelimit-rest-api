@@ -1,16 +1,16 @@
-package database
+package config
 
 import (
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/model"
+	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/internal/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-func MustConnect() *gorm.DB {
+func MustConnectDB() *gorm.DB {
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	host := os.Getenv("DB_HOST")

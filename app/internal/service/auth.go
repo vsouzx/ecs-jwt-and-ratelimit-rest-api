@@ -1,4 +1,4 @@
-package auth
+package service
 
 import (
 	"fmt"
@@ -7,33 +7,41 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/dto"
-	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/model"
-	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/src/repository"
+	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/internal/model"
+	"github.com/vsouzx/ecs-jwt-ratelimit-rest-api/internal/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthServiceInterface interface {
-	Register(ctx *fiber.Ctx, req dto.RegisterRequest) error
-	Login(ctx *fiber.Ctx, req dto.LoginRequest) error
+type RegisterRequest struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-type AuthService struct {
-	UserRepository repository.UserRepositoryInterface
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
-func NewAuthService(userRepository repository.UserRepositoryInterface) *AuthService {
-	return &AuthService{
-		UserRepository: userRepository,
-	}
+type AuthService interface {
+	Register(ctx *fiber.Ctx, req RegisterRequest) error
+	Login(ctx *fiber.Ctx, req LoginRequest) error
 }
 
-func (as *AuthService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
-	existingUser, err := as.UserRepository.FindByEmail(req.Email)
+type authService struct {
+	userRepo repository.UserRepository
+}
+
+func NewAuthService(userRepo repository.UserRepository) AuthService {
+	return &authService{userRepo: userRepo}
+}
+
+func (s *authService) Register(ctx *fiber.Ctx, req RegisterRequest) error {
+	existingUser, err := s.userRepo.FindByEmail(req.Email)
 	if err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
 	}
-	fmt.Print("t")
+
 	if existingUser != (model.User{}) {
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Já existe um usuário com este e-mail"})
 	}
@@ -44,16 +52,16 @@ func (as *AuthService) Register(ctx *fiber.Ctx, req dto.RegisterRequest) error {
 	}
 
 	newUser := &model.User{Name: req.Name, Password: string(hashedPassword), Email: req.Email}
-	if err := as.UserRepository.Create(newUser); err != nil {
+	if err := s.userRepo.Create(newUser); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro salvar usuário no banco: %s", err.Error()))
 	}
+
 	return ctx.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Usuário criado com sucesso"})
 }
 
-func (as *AuthService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
-	user, err := as.UserRepository.FindByEmail(req.Email)
+func (s *authService) Login(ctx *fiber.Ctx, req LoginRequest) error {
+	user, err := s.userRepo.FindByEmail(req.Email)
 	if err != nil {
-
 		return fiber.NewError(fiber.StatusInternalServerError, fmt.Sprintf("Erro ao buscar usuário pelo e-mail %s: %s", req.Email, err.Error()))
 	}
 
@@ -67,12 +75,11 @@ func (as *AuthService) Login(ctx *fiber.Ctx, req dto.LoginRequest) error {
 
 	claims := jwt.MapClaims{
 		"identifier": user.Identifier,
-		"exp":        time.Now().Add(time.Duration(15) * time.Minute).Unix(),
+		"exp":        time.Now().Add(15 * time.Minute).Unix(),
 		"iat":        time.Now().Unix(),
 	}
 
-	secretKey := os.Getenv("JWT_SECRET")
-	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(secretKey))
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": fmt.Sprintf("Erro ao gerar token: %s", err.Error())})
 	}

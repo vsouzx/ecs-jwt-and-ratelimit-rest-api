@@ -1,18 +1,19 @@
 variable "aws_region" {
-    type = string
-    default = "us-east-1"
+  description = "AWS region where all resources will be provisioned"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "app_name" {
-    description = "Nome base dos recursos"
-    type = string
-    default = "gofiber-api"
+  description = "Base name used as prefix for all resource names"
+  type        = string
+  default     = "gofiber-api"
 }
 
-variable "image" {
-    description = "Imagem do container (Docker Hub, ECR, etc.)"
-    type = string
-    default = "vsouzx/ecs-jwt-and-ratelimit-rest-api:latest"
+variable "image_uri" {
+  description = "Full container image URI (Docker Hub, ECR, etc.) injected by CI/CD via TF_VAR_image_uri"
+  type        = string
+  default     = "vsouzx/ecs-jwt-and-ratelimit-rest-api:latest"
 }
 
 variable "cpu_architecture" {
@@ -27,25 +28,25 @@ variable "cpu_architecture" {
 }
 
 variable "container_port" {
-    description = "Porta exposta pelo container"
-    type = number
-    default = 8080
+  description = "Port exposed by the container"
+  type        = number
+  default     = 8080
 }
 
 variable "db_secret_arn" {
-  type = string
+  description = "ARN of the AWS Secrets Manager secret containing db_username and db_password"
+  type        = string
 }
 
-variable "jwt_secret" {
-  description = "JWT secret used by the application"
+variable "db_name" {
+  description = "Name of the MySQL database to create"
   type        = string
-  sensitive   = true
+  default     = "app"
 }
 
-variable "redis_auth_token" {
-  description = "Authentication token for the Redis replication group"
+variable "app_secrets_arn" {
+  description = "ARN of the AWS Secrets Manager secret containing jwt_secret and redis_auth_token"
   type        = string
-  sensitive   = true
 }
 
 variable "redis_db" {
@@ -61,13 +62,13 @@ variable "rate_limit_count" {
 }
 
 variable "rate_limit_ttl" {
-  description = "Rate limiting window in seconds"
+  description = "Rate limiting window duration in minutes"
   type        = number
   default     = 1
 }
 
 variable "run_automigrate" {
-  description = "Whether the API should run database automigrations on startup"
+  description = "Whether the API should run database auto-migrations on startup"
   type        = bool
   default     = false
 }

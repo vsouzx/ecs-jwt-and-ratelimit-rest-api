@@ -1,16 +1,19 @@
 output "alb_dns_name" {
-  description = "DNS do Load Balancer"
-  value       = aws_lb.load_balancer.dns_name
+  description = "DNS name of the Application Load Balancer"
+  value       = aws_lb.main.dns_name
 }
 
 output "cluster_name" {
-  value = aws_ecs_cluster.gofiber-api-cluster.name
+  description = "Name of the ECS cluster"
+  value       = aws_ecs_cluster.main.name
 }
 
 output "service_name" {
-  value = aws_ecs_service.gofiber-api.name
+  description = "Name of the ECS service"
+  value       = aws_ecs_service.main.name
 }
 
 output "task_definition_arn" {
-  value = aws_ecs_task_definition.task_definition.arn
+  description = "ARN of the latest active ECS task definition"
+  value       = aws_ecs_task_definition.main.arn
 }

@@ -1,4 +1,4 @@
-package redis
+package config
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	redis "github.com/redis/go-redis/v9"
 )
 
-func MustConnect() *redis.Client {
+func MustConnectRedis() *redis.Client {
 	endpoint := os.Getenv("REDIS_ENDPOINT")
 	port := os.Getenv("REDIS_PORT")
 	password := os.Getenv("REDIS_PASS")

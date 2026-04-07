@@ -1,61 +1,58 @@
-# SG do Load Balancer (HTTP 80 público)
 resource "aws_security_group" "alb" {
-    name = "${var.app_name}-alb-sg"
-    description = "ALB SG"
-    vpc_id = data.aws_vpc.default.id
-
-    ingress {
-        description = "HTTP"
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-        ipv6_cidr_blocks = ["::/0"]
-    }
-
-
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-        ipv6_cidr_blocks = ["::/0"]
-    }
-}
-
-# SG das Tasks (apenas tráfego do ALB na porta do container)
-resource "aws_security_group" "task" {
-    name = "${var.app_name}-task-sg"
-    description = "ECS Task SG"
-    vpc_id = data.aws_vpc.default.id
-
-    ingress {
-        description = "ALB to Task"
-        from_port = var.container_port
-        to_port = var.container_port
-        protocol = "tcp"
-        security_groups = [aws_security_group.alb.id]
-    }
-
-    egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-        ipv6_cidr_blocks = ["::/0"]
-    }   
-}
-
-resource "aws_security_group" "rds_sg" {
-  name        = "rds-mysql-sg"
-  description = "Allow MySQL access"
+  name        = "${var.app_name}-alb-sg"
+  description = "Allow public HTTP inbound traffic to the ALB"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description = "Allow MySQL from ECS tasks"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    description      = "HTTP from internet"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_security_group" "task" {
+  name        = "${var.app_name}-task-sg"
+  description = "Allow inbound traffic from the ALB to ECS tasks only"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description     = "Container port from ALB"
+    from_port       = var.container_port
+    to_port         = var.container_port
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb.id]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_security_group" "rds" {
+  name        = "${var.app_name}-rds-sg"
+  description = "Allow MySQL access from ECS tasks only"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    description     = "MySQL from ECS tasks"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.task.id]
   }
 
@@ -65,20 +62,15 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
-  tags = {
-    Name = "rds-mysql-sg"
-  }
 }
 
-
-resource "aws_security_group" "redis_sg" {
-  name        = "redis-sg"
-  description = "Acesso ao Redis apenas a partir das ECS tasks"
+resource "aws_security_group" "redis" {
+  name        = "${var.app_name}-redis-sg"
+  description = "Allow Redis access from ECS tasks only"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description     = "Redis 6379 das ECS tasks"
+    description     = "Redis from ECS tasks"
     from_port       = 6379
     to_port         = 6379
     protocol        = "tcp"
