@@ -1,5 +1,4 @@
 db_secret_arn    = "arn:aws:secretsmanager:us-east-1:337328321041:secret:prod-mysql-credentials-Bbqjg5"
-app_secrets_arn  = "arn:aws:secretsmanager:us-east-1:337328321041:secret:prod-app-secrets-XXXXXX"
 db_name          = "app"
 cpu_architecture = "ARM64"
 redis_db         = 0
@@ -7,3 +6,4 @@ rate_limit_count = 10
 rate_limit_ttl   = 1
 run_automigrate  = true
 extra_container_env = {}
+app_secrets_arn = "arn:aws:secretsmanager:us-east-1:337328321041:secret:app_secrets-9qGq5M"
