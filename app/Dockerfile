@@ -13,7 +13,7 @@ COPY . .
 ARG TARGETOS=linux
 ARG TARGETARCH
 ENV CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH
-RUN go build -ldflags="-s -w" -o /app/main .
+RUN go build -ldflags="-s -w" -o /app/main ./cmd/api
 RUN file /app/main
 
 FROM scratch

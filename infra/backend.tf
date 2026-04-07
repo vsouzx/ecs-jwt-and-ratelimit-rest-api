@@ -1,5 +1,5 @@
 terraform {
-  backend "s3" {
-    region = var.aws_region
-  }
+  # Bucket, key, region e dynamodb_table são passados via -backend-config no CI/CD.
+  # Terraform não suporta interpolação de variáveis no bloco backend.
+  backend "s3" {}
 }

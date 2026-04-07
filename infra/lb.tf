@@ -1,4 +1,4 @@
-resource "aws_lb" "load_balancer" {
+resource "aws_lb" "main" {
   name               = "${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"
@@ -6,16 +6,16 @@ resource "aws_lb" "load_balancer" {
   subnets            = data.aws_subnets.default_in_vpc.ids
 }
 
-resource "aws_lb_target_group" "target_group" {
+resource "aws_lb_target_group" "main" {
   name        = "${var.app_name}-tg"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = data.aws_vpc.default.id
-  target_type = "ip" # obrigatório para Fargate
+  target_type = "ip" # required for Fargate
 
   health_check {
     enabled  = true
-    path     = "/health" # ajuste se necessário
+    path     = "/health"
     matcher  = "200-399"
     interval = 30
     timeout  = 5
@@ -23,13 +23,12 @@ resource "aws_lb_target_group" "target_group" {
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.load_balancer.arn
+  load_balancer_arn = aws_lb.main.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.target_group.arn
+    target_group_arn = aws_lb_target_group.main.arn
   }
 }
-

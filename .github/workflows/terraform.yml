@@ -95,7 +95,6 @@ jobs:
       - name: Terraform Plan or Destroy
         working-directory: infra
         env:
-          # disponibiliza a image_uri para os módulos do TF
           TF_VAR_image_uri: ${{ steps.meta.outputs.image_uri }}
         run: |
           if [ "${{ inputs.destroy }}" = "true" ]; then

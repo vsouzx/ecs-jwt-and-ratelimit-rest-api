@@ -1,1 +1,14 @@
 /app/setup-local.sh
+
+.idea/
+
+CLAUDE.md
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+*.tfvars.local
+override.tf
+override.tf.json
