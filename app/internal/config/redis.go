@@ -2,6 +2,7 @@ package config
 
 import (
 	"context"
+	"crypto/tls"
 	"os"
 	"strconv"
 
@@ -14,11 +15,14 @@ func MustConnectRedis() *redis.Client {
 	password := os.Getenv("REDIS_PASS")
 	db, _ := strconv.Atoi(os.Getenv("REDIS_DB"))
 
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     endpoint + ":" + port,
-		Password: password,
-		DB:       db,
-	})
+	opts := &redis.Options{
+		Addr:      endpoint + ":" + port,
+		Password:  password,
+		DB:        db,
+		TLSConfig: &tls.Config{ServerName: endpoint},
+	}
+
+	redisClient := redis.NewClient(opts)
 
 	if err := redisClient.Ping(context.Background()).Err(); err != nil {
 		panic("erro ao conectar no Redis: " + err.Error())
